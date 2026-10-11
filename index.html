@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>適格請求書（インボイス）PDF 生成ツール｜登録番号対応・無料</title>
+<meta name="description" content="登録番号・税率区分・消費税額に自動対応した適格請求書（インボイス）を無料で作成し、PDF として保存・印刷できるツールです。フリーランス・個人事業主の方に。登録不要、すべてブラウザ内で完結します。">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="./index.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="適格請求書（インボイス）PDF 生成ツール｜無料">
+<meta property="og:description" content="登録番号・税率区分・消費税額に自動対応した適格請求書を無料で作成し、PDF 保存できます。">
+<meta property="og:locale" content="ja_JP">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231e3a8a'/%3E%3Cpath d='M9 8h10l5 5v11a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2z' fill='%23ffffff'/%3E%3Cpath d='M19 8v5h5' fill='%23c7d2fe'/%3E%3Cg stroke='%231e3a8a' stroke-width='1.6' stroke-linecap='round'%3E%3Cpath d='M11 17h10M11 20h10M11 23h6'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header no-print">
+  <div class="wrap header-inner">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+        <rect width="32" height="32" rx="7" fill="currentColor"/>
+        <path d="M9 8h10l5 5v11a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2z" fill="#fff"/>
+        <path d="M19 8v5h5" fill="#c7d2fe"/>
+        <g stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+          <path d="M11 17h10M11 20h10M11 23h6"/>
+        </g>
+      </svg>
+      <div class="brand-text">
+        <strong>適格請求書 作成ツール</strong>
+        <span>インボイス制度対応・無料</span>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button type="button" class="btn btn-primary" id="printBtn">
+        <svg viewBox="0 0 20 20" aria-hidden="true" class="ic">
+          <path d="M6 7V3h8v4M6 15H4.5A1.5 1.5 0 0 1 3 13.5v-4A1.5 1.5 0 0 1 4.5 8h11A1.5 1.5 0 0 1 17 9.5v4a1.5 1.5 0 0 1-1.5 1.5H14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <rect x="6" y="12" width="8" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+        印刷 / PDF保存
+      </button>
+      <button type="button" class="btn btn-ghost" id="resetBtn">リセット</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap layout">
+
+  <!-- ============ 入力フォーム ============ -->
+  <section class="pane form-pane no-print" aria-label="入力フォーム">
+    <div class="pane-head">
+      <h2>請求書の内容を入力</h2>
+      <p class="hint">入力すると右のプレビューにすぐ反映されます。</p>
+    </div>
+
+    <form id="invoiceForm" autocomplete="off" novalidate>
+
+      <fieldset class="card">
+        <legend>発行者の情報<span class="req-badge">要件 1・6</span></legend>
+
+        <div class="field">
+          <label for="issuerName">発行者名（氏名・名称）<span class="req">必須</span></label>
+          <input type="text" id="issuerName" name="issuerName" placeholder="例：山田 太郎 / サンプル合同会社">
+        </div>
+
+        <div class="field">
+          <label for="regNumber">登録番号<span class="req">必須</span></label>
+          <input type="text" id="regNumber" name="regNumber" placeholder="T1234567890123"
+                 inputmode="text" spellcheck="false" aria-describedby="regNumberHelp regNumberError">
+          <p class="help" id="regNumberHelp">「T」＋13桁の半角数字（全角で入力しても自動変換されます）</p>
+          <p class="error" id="regNumberError" role="alert" hidden>登録番号の形式が正しくありません。「T」の後に13桁の数字を入力してください。</p>
+        </div>
+
+        <div class="field">
+          <label for="clientName">宛先名（請求先）<span class="req">必須</span></label>
+          <input type="text" id="clientName" name="clientName" placeholder="例：株式会社サンプル">
+        </div>
+
+        <div class="field">
+          <label for="clientHonorific">宛名の敬称</label>
+          <select id="clientHonorific" name="clientHonorific">
+            <option value="御中" selected>御中</option>
+            <option value="様">様</option>
+            <option value="">（付けない）</option>
+          </select>
+        </div>
+      </fieldset>
+
+      <fieldset class="card">
+        <legend>取引の情報<span class="req-badge">要件 2</span></legend>
+
+        <div class="field">
+          <label for="issueDate">取引年月日<span class="req">必須</span></label>
+          <input type="date" id="issueDate" name="issueDate">
+        </div>
+
+        <div class="field">
+          <label for="docTitle">書類タイトル</label>
+          <select id="docTitle" name="docTitle">
+            <option value="請求書" selected>請求書</option>
+            <option value="適格請求書">適格請求書</option>
+            <option value="請求明細書">請求明細書</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="invoiceNo">請求書番号（任意）</label>
+          <input type="text" id="invoiceNo" name="invoiceNo" placeholder="例：INV-2026-001">
+        </div>
+      </fieldset>
+
+      <fieldset class="card">
+        <legend>明細行<span class="req-badge">要件 3・4・5</span></legend>
+
+        <div class="rows-head" aria-hidden="true">
+          <span class="c-name">品目</span>
+          <span class="c-qty">数量</span>
+          <span class="c-price">単価</span>
+          <span class="c-tax">税率</span>
+          <span class="c-del"></span>
+        </div>
+
+        <div id="rowsContainer" class="rows"></div>
+
+        <div class="rows-actions">
+          <button type="button" class="btn btn-outline btn-sm" id="addRowBtn">
+            <svg viewBox="0 0 16 16" aria-hidden="true" class="ic"><path d="M8 3v10M3 8h10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            明細行を追加
+          </button>
+          <p class="hint">単価は<strong>税抜金額</strong>で入力してください。8% は軽減税率対象として表示されます。</p>
+        </div>
+      </fieldset>
+
+      <fieldset class="card">
+        <legend>備考・振込先</legend>
+
+        <div class="field">
+          <label for="notes">備考</label>
+          <textarea id="notes" name="notes" rows="3" placeholder="例：お支払い期限は翌月末日です。"></textarea>
+        </div>
+
+        <div class="field">
+          <label for="bankInfo">振込先</label>
+          <textarea id="bankInfo" name="bankInfo" rows="3" placeholder="例：サンプル銀行 本店 普通 1234567 ヤマダ タロウ"></textarea>
+        </div>
+
+        <div class="field">
+          <label for="dueDate">支払期限（任意）</label>
+          <input type="date" id="dueDate" name="dueDate">
+        </div>
+      </fieldset>
+
+      <p class="privacy-note">
+        <svg viewBox="0 0 16 16" aria-hidden="true" class="ic"><path d="M8 1.5 3 3.5v4c0 3 2.1 5.6 5 6.5 2.9-.9 5-3.5 5-6.5v-4L8 1.5z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+        入力した内容はサーバーに送信されません。すべてお使いのブラウザ内だけで処理されます。
+      </p>
+    </form>
+  </section>
+
+  <!-- ============ プレビュー / 印刷対象 ============ -->
+  <section class="pane preview-pane" aria-label="プレビュー">
+    <div class="preview-bar no-print">
+      <span class="dot"></span> プレビュー（A4）
+    </div>
+
+    <div class="paper-wrap">
+      <article class="paper" id="paper">
+        <h1 class="doc-title" id="pvTitle">請求書</h1>
+
+        <header class="doc-head">
+          <div class="doc-head-left">
+            <p class="doc-to">
+              <span class="client-name" id="pvClientName">株式会社サンプル</span><span class="honorific" id="pvHonorific">御中</span>
+            </p>
+            <p class="doc-meta-line">
+              <span class="meta-label">取引年月日</span>
+              <span id="pvDate">2026年10月11日</span>
+            </p>
+            <p class="doc-meta-line" id="pvInvoiceNoLine" hidden>
+              <span class="meta-label">請求書番号</span>
+              <span id="pvInvoiceNo"></span>
+            </p>
+            <p class="doc-meta-line" id="pvDueLine" hidden>
+              <span class="meta-label">お支払期限</span>
+              <span id="pvDue"></span>
+            </p>
+          </div>
+
+          <div class="doc-head-right">
+            <p class="issuer-name" id="pvIssuerName">山田 太郎</p>
+            <p class="issuer-reg">登録番号：<span id="pvRegNumber">T1234567890123</span></p>
+          </div>
+        </header>
+
+        <div class="total-banner">
+          <span class="total-label">ご請求金額（税込）</span>
+          <span class="total-value" id="pvTotal">¥0</span>
+        </div>
+
+        <table class="items-table">
+          <thead>
+            <tr>
+              <th class="th-name">品目</th>
+              <th class="th-qty">数量</th>
+              <th class="th-price">単価</th>
+              <th class="th-tax">税率</th>
+              <th class="th-amount">金額</th>
+            </tr>
+          </thead>
+          <tbody id="pvItems"></tbody>
+        </table>
+
+        <p class="reduced-note" id="pvReducedNote" hidden>※ は軽減税率（8%）の対象品目です。</p>
+
+        <div class="summary">
+          <div class="summary-breakdown">
+            <table class="breakdown-table">
+              <thead>
+                <tr>
+                  <th>税率区分</th>
+                  <th class="num">対象額（税抜）</th>
+                  <th class="num">消費税額</th>
+                </tr>
+              </thead>
+              <tbody id="pvBreakdown"></tbody>
+            </table>
+          </div>
+
+          <div class="summary-totals">
+            <div class="sum-row">
+              <span>小計（税抜）</span>
+              <span class="num" id="pvSubtotal">¥0</span>
+            </div>
+            <div class="sum-row">
+              <span>消費税額合計</span>
+              <span class="num" id="pvTaxTotal">¥0</span>
+            </div>
+            <div class="sum-row sum-grand">
+              <span>合計</span>
+              <span class="num" id="pvGrand">¥0</span>
+            </div>
+          </div>
+        </div>
+
+        <footer class="doc-foot">
+          <div class="foot-block" id="pvNotesBlock" hidden>
+            <h2 class="foot-title">備考</h2>
+            <p class="foot-body" id="pvNotes"></p>
+          </div>
+          <div class="foot-block" id="pvBankBlock" hidden>
+            <h2 class="foot-title">お振込先</h2>
+            <p class="foot-body" id="pvBank"></p>
+          </div>
+        </footer>
+
+        <p class="paper-footnote" id="pvPaperNote" hidden></p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ SEO 説明文 ============ -->
+  <section class="seo no-print" aria-label="ツールについて">
+    <h2>適格請求書（インボイス）PDF 生成ツールとは</h2>
+    <p>
+      2023年10月から始まったインボイス制度（適格請求書等保存方式）では、フリーランスや個人事業主が取引先へ発行する請求書にも、
+      <strong>登録番号</strong>や<strong>税率ごとに区分した合計額と消費税額</strong>といった法定記載事項が求められます。
+      この無料ツールは、そうした<strong>適格請求書（適格簡易請求書）</strong>の要件を満たす請求書を、ブラウザ上でかんたんに作成できるようにするものです。
+    </p>
+    <p>
+      発行者名・登録番号（T＋13桁）・宛先・取引年月日・明細を入力するだけで、10%（標準税率）と 8%（軽減税率）を自動で区分し、
+      税率ごとの対象額と消費税額を計算してプレビューに反映します。完成した請求書は「印刷 / PDF保存」ボタンから
+      A4 サイズの PDF として保存したり、そのまま印刷したりできます。会計ソフトを使うほどではない、という場面に向いています。
+    </p>
+
+    <h3>適格請求書の6つの法定記載事項</h3>
+    <ol class="seo-list">
+      <li><strong>発行者の氏名または名称、および登録番号</strong> — 登録番号は「T」＋13桁の数字です。</li>
+      <li><strong>取引年月日</strong> — 課税資産の譲渡等を行った日を記載します。</li>
+      <li><strong>取引内容</strong> — 軽減税率の対象となる品目は、その旨を明記します。</li>
+      <li><strong>税率ごとに区分した合計額と適用税率</strong> — 10% と 8% を分けて記載します。</li>
+      <li><strong>税率ごとの消費税額</strong> — 税率区分ごとに消費税額を記載します。</li>
+      <li><strong>交付を受ける事業者の氏名または名称</strong> — 請求先の宛名を記載します。</li>
+    </ol>
+
+    <h3>よくある質問</h3>
+    <dl class="faq">
+      <dt>登録番号がまだ無い場合はどうすればよいですか？</dt>
+      <dd>登録番号が無い場合は「適格請求書」ではなく、区分記載請求書としての扱いになります。本ツールで登録番号欄を空にした場合も、その旨がプレビューに表示されます。</dd>
+
+      <dt>消費税の端数処理はどうなっていますか？</dt>
+      <dd>税率区分ごとの合計額に対して消費税を計算し、1円未満を切り捨てています。これは一般的な処理方法のひとつです。</dd>
+
+      <dt>入力したデータはどこかに保存されますか？</dt>
+      <dd>いいえ。入力内容はサーバーへ送信されず、お使いの端末のブラウザ内だけで処理されます。ページを閉じると内容は破棄されます。</dd>
+
+      <dt>作成した請求書はそのまま送れますか？</dt>
+      <dd>「印刷 / PDF保存」から PDF として保存できます。実際の取引では、取引内容や請求先との取り決めに合わせて内容をご確認ください。</dd>
+    </dl>
+
+    <p class="disclaimer">
+      ※ 本ツールは請求書作成の補助を目的としたものであり、法令への適合を保証するものではありません。記載内容の最終確認はご自身で、または税理士などの専門家にご相談ください。
+    </p>
+  </section>
+</main>
+
+<footer class="site-footer no-print">
+  <div class="wrap">
+    <p>適格請求書 作成ツール — ブラウザだけで動く無料のインボイス対応請求書ジェネレーター</p>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
