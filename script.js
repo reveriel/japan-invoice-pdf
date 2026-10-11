@@ -521,3 +521,215 @@
     init();
   }
 })();
+
+/* =========================================================
+   シェア（バイラル導線） — 既存機能には触れない独立モジュール
+   ========================================================= */
+(function () {
+  'use strict';
+
+  var SHARE_URL  = "https://www.reveriel.com/japan-invoice-pdf/";
+  var CARD_TITLE = "適格請求書 作成ツール";
+  var CARD_SUB   = "ブラウザだけで作れる無料の適格請求書ジェネレーター";
+  var CARD_FOOT  = "www.reveriel.com/japan-invoice-pdf";
+  var FILE_NAME  = "japan-invoice-pdf.png";
+
+  var SHARE_TEXT = "ブラウザだけで作れる無料の適格請求書ジェネレーター";
+
+  function byId(id) { return document.getElementById(id); }
+
+  function shareText() { return SHARE_TEXT; }
+  function cardSub()   { return CARD_SUB; }
+
+  function openExternal(url) {
+    if (!url) return;
+    var a = document.createElement('a');
+    a.href = url;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+
+  function buildTweetUrl() {
+    return 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(shareText()) +
+      '&url=' + encodeURIComponent(SHARE_URL);
+  }
+  function buildLineUrl() {
+    return 'https://social-plugins.line.me/lineit/share?url=' + encodeURIComponent(SHARE_URL);
+  }
+
+  function fallbackCopy(text) {
+    try {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.cssText = 'position:absolute;left:-9999px;top:0';
+      document.body.appendChild(ta);
+      ta.select();
+      var ok = document.execCommand('copy');
+      document.body.removeChild(ta);
+      return ok;
+    } catch (e) { return false; }
+  }
+
+  function copyText(text) {
+    return new Promise(function (resolve) {
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(text).then(
+            function () { resolve(true); },
+            function () { resolve(fallbackCopy(text)); }
+          );
+          return;
+        }
+      } catch (e) { /* fallthrough */ }
+      resolve(fallbackCopy(text));
+    });
+  }
+
+  /* ---- 共有カード（1200 x 630） ---- */
+  var CARD_W = 1200, CARD_H = 630;
+  var FONT = '"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic",sans-serif';
+
+  function roundRect(ctx, x, y, w, h, r) {
+    if (typeof ctx.roundRect === 'function') { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); return; }
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+
+  function drawCard(ctx) {
+    var g = ctx.createLinearGradient(0, 0, CARD_W, CARD_H);
+    g.addColorStop(0, '#1e3a8a');
+    g.addColorStop(1, '#2f5bd0');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, CARD_W, CARD_H);
+
+    ctx.fillStyle = 'rgba(255,255,255,.07)';
+    ctx.beginPath(); ctx.arc(CARD_W - 130, 80, 230, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(CARD_W - 300, CARD_H + 10, 160, 0, Math.PI * 2); ctx.fill();
+
+    var PAD = 80;
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
+
+    ctx.fillStyle = 'rgba(255,255,255,.72)';
+    ctx.font = '600 24px ' + FONT;
+    ctx.fillText('FREE TOOL — BROWSER ONLY', PAD, 106);
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '700 74px ' + FONT;
+    ctx.fillText(CARD_TITLE, PAD, 260);
+
+    ctx.fillStyle = 'rgba(255,255,255,.92)';
+    ctx.font = '500 34px ' + FONT;
+    ctx.fillText(cardSub(), PAD, 336);
+
+    ctx.fillStyle = 'rgba(255,255,255,.85)';
+    roundRect(ctx, PAD, CARD_H - 138, 64, 6, 3);
+    ctx.fill();
+
+    ctx.fillStyle = '#dbe6ff';
+    ctx.font = '700 30px ' + FONT;
+    ctx.fillText(CARD_FOOT, PAD, CARD_H - 80);
+
+    ctx.textAlign = 'right';
+    ctx.fillStyle = 'rgba(255,255,255,.62)';
+    ctx.font = '500 22px ' + FONT;
+    ctx.fillText('無料・登録不要', CARD_W - PAD, CARD_H - 80);
+    ctx.textAlign = 'left';
+  }
+
+  function renderCardBlob() {
+    return new Promise(function (resolve) {
+      try {
+        var canvas = document.createElement('canvas');
+        canvas.width = CARD_W;
+        canvas.height = CARD_H;
+        var ctx = canvas.getContext('2d');
+        var finish = function () {
+          if (canvas.toBlob) canvas.toBlob(function (b) { resolve(b); }, 'image/png');
+          else resolve(null);
+        };
+        var draw = function () {
+          try { drawCard(ctx); } catch (e) {}
+          finish();
+        };
+        if (document.fonts && document.fonts.ready) {
+          var drawn = false;
+          var once = function () { if (drawn) { return; } drawn = true; draw(); };
+          document.fonts.ready.then(once).catch(once);
+          // fonts.ready が解決しない環境でも保存ボタンが固まらないようタイムアウト競走させる
+          setTimeout(once, 1500);
+        } else {
+          draw();
+        }
+      } catch (e) { resolve(null); }
+    });
+  }
+
+  function flash(el, text) {
+    if (!el) return;
+    var old = el.textContent;
+    el.textContent = text;
+    setTimeout(function () { el.textContent = old; }, 1800);
+  }
+
+  function init() {
+    var xBtn = byId('shareXBtn');
+    var lBtn = byId('shareLineBtn');
+    var cBtn = byId('shareCopyBtn');
+    var sBtn = byId('shareSaveBtn');
+    var urlText = byId('shareUrlText');
+    if (!xBtn || !lBtn || !cBtn) return;
+
+    if (urlText) urlText.textContent = SHARE_URL;
+
+    xBtn.addEventListener('click', function () { openExternal(buildTweetUrl()); });
+    lBtn.addEventListener('click', function () { openExternal(buildLineUrl()); });
+
+    var copyLabel = byId('shareCopyLabel');
+    var resetTimer = null;
+    cBtn.addEventListener('click', function () {
+      var original = copyLabel ? copyLabel.textContent : '';
+      copyText(SHARE_URL).then(function (ok) {
+        if (!copyLabel) return;
+        copyLabel.textContent = ok ? 'コピーしました' : 'コピーできませんでした';
+        if (resetTimer) clearTimeout(resetTimer);
+        resetTimer = setTimeout(function () { copyLabel.textContent = original; }, 1800);
+      });
+    });
+
+    if (sBtn) {
+      var saveLabel = byId('shareSaveLabel');
+      sBtn.addEventListener('click', function () {
+        if (sBtn.disabled) return;
+        sBtn.disabled = true;
+        renderCardBlob().then(function (blob) {
+          sBtn.disabled = false;
+          if (!blob) { flash(saveLabel, '画像を生成できませんでした'); return; }
+          var url = URL.createObjectURL(blob);
+          var a = document.createElement('a');
+          a.href = url;
+          a.download = FILE_NAME;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+        });
+      });
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
