@@ -1,0 +1,96 @@
+/* =========================================================
+   法務ページ（プライバシーポリシー / 運営者情報）共通スタイル
+   style.css の CSS 変数を継承。暗色は style.css 側で自動対応。
+   ========================================================= */
+
+.legal-page { padding-block: 22px 48px; }
+
+.legal-col { max-width: 820px; margin-inline: auto; }
+
+.legal-back {
+  display: inline-block;
+  margin-bottom: 14px;
+  font-size: 13px;
+  color: var(--c-accent);
+  text-decoration: none;
+}
+.legal-back:hover { text-decoration: underline; }
+
+.legal {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  padding: 34px 38px 40px;
+}
+@media (max-width: 640px) { .legal { padding: 22px 18px 26px; } }
+
+.legal h1 {
+  margin: 0 0 10px;
+  font-size: 24px;
+  line-height: 1.5;
+  color: var(--c-text);
+}
+.legal h2 {
+  margin: 32px 0 12px;
+  padding-left: 12px;
+  font-size: 17px;
+  line-height: 1.5;
+  border-left: 4px solid var(--c-accent);
+  color: var(--c-text);
+}
+.legal p { margin: 0 0 14px; color: var(--c-text-muted); }
+.legal strong { color: var(--c-text); font-weight: 700; }
+.legal ul, .legal ol { margin: 0 0 16px; padding-left: 1.5em; color: var(--c-text-muted); }
+.legal li { margin-bottom: 7px; }
+.legal a:not(.btn) { color: var(--c-accent); }
+
+.legal-meta { margin: 0 0 22px; font-size: 12.5px; color: var(--c-text-faint); }
+
+.legal-table {
+  width: 100%;
+  margin: 0 0 18px;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.legal-table th,
+.legal-table td {
+  padding: 12px 14px;
+  text-align: left;
+  vertical-align: top;
+  border: 1px solid var(--c-border);
+  color: var(--c-text-muted);
+  line-height: 1.75;
+}
+.legal-table th {
+  width: 11em;
+  background: var(--c-surface-2);
+  color: var(--c-text);
+  font-weight: 700;
+  white-space: nowrap;
+}
+@media (max-width: 560px) {
+  .legal-table th { white-space: normal; width: 8.5em; }
+  .legal-table th, .legal-table td { padding: 10px 11px; font-size: 13.5px; }
+}
+
+.legal-contact {
+  margin-top: 26px;
+  padding-top: 16px;
+  border-top: 1px solid var(--c-border);
+  font-size: 13px;
+  color: var(--c-text-faint);
+}
+.legal-contact p:last-child { margin-bottom: 0; }
+
+.legal-nav {
+  margin-top: 18px;
+  font-size: 13px;
+  color: var(--c-text-faint);
+}
+.legal-nav a { color: var(--c-accent); }
+
+@media print {
+  .site-header, .site-footer, .feedback-fab, .legal-back { display: none !important; }
+  .legal { border: 0; box-shadow: none; padding: 0; }
+}
