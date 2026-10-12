@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>適格請求書の端数処理・消費税の計算ルール｜税率ごとに1回の切り捨て・四捨五入</title>
+<meta name="description" content="適格請求書の消費税額の端数処理は税率ごとに1回だけ。切り捨て・切り上げ・四捨五入の違い、明細行ごとに処理してはいけない理由、10%と軽減税率8%が混在する場合の計算例、税抜・税込の扱いまでをまとめて解説します。">
+<meta name="keywords" content="適格請求書 端数処理,消費税 計算 切り捨て,消費税 四捨五入,軽減税率 8% 計算,インボイス 税率ごと 端数処理">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.reveriel.com/japan-invoice-pdf/hasuu.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="適格請求書の端数処理・消費税の計算ルール｜税率ごとに1回の切り捨て・四捨五入">
+<meta property="og:description" content="消費税額の端数処理は税率ごとに1回だけ。切り捨て・四捨五入の違いと軽減税率8%の計算例を解説します。">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:url" content="https://www.reveriel.com/japan-invoice-pdf/hasuu.html">
+<meta property="og:image" content="https://www.reveriel.com/japan-invoice-pdf/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.reveriel.com/japan-invoice-pdf/og-image.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231e3a8a'/%3E%3Cpath d='M9 8h10l5 5v11a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2z' fill='%23ffffff'/%3E%3Cpath d='M19 8v5h5' fill='%23c7d2fe'/%3E%3Cg stroke='%231e3a8a' stroke-width='1.6' stroke-linecap='round'%3E%3Cpath d='M11 17h10M11 20h10M11 23h6'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="guide.css">
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "6fc01bf3ac5e457ba1bd16b91e5b653e"}'></script><!-- End Cloudflare Web Analytics -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "適格請求書の端数処理・消費税の計算ルール",
+      "description": "消費税額の端数処理は税率ごとに1回だけ。切り捨て・切り上げ・四捨五入の違い、明細行ごとに処理してはいけない理由、10%と軽減税率8%が混在する場合の計算例、税抜・税込の扱いを解説します。",
+      "inLanguage": "ja",
+      "datePublished": "2026-10-12",
+      "dateModified": "2026-10-12",
+      "author": { "@type": "Organization", "name": "Reveriel" },
+      "publisher": { "@type": "Organization", "name": "Reveriel" },
+      "mainEntityOfPage": { "@type": "WebPage", "@id": "https://www.reveriel.com/japan-invoice-pdf/hasuu.html" },
+      "image": "https://www.reveriel.com/japan-invoice-pdf/og-image.png"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "適格請求書 作成ツール", "item": "https://www.reveriel.com/japan-invoice-pdf/" },
+        { "@type": "ListItem", "position": 2, "name": "書き方ガイド", "item": "https://www.reveriel.com/japan-invoice-pdf/kakikata.html" },
+        { "@type": "ListItem", "position": 3, "name": "端数処理・消費税の計算ルール", "item": "https://www.reveriel.com/japan-invoice-pdf/hasuu.html" }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "消費税額の端数処理はいつ行えばよいですか？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "適格請求書では、端数処理は税率ごとに1回だけ行います。10%の取引をまとめた合計額から消費税を計算して1回、8%の取引をまとめた合計額から消費税を計算して1回、という具合です。明細行ごとに端数処理をすると、区分ごとの合計と一致しなくなるため注意してください。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "切り捨て・切り上げ・四捨五入のどれを使うべきですか？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "法令上は切り捨て・切り上げ・四捨五入のいずれでも構いません。ただし、一度選んだ方法は継続して適用する必要があります。実務では切り捨てが多く使われますが、取引先との取り決めがある場合はそれに従ってください。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "10%と8%が混在するとき、消費税はどう計算しますか？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "税率ごとに取引を区分し、区分ごとに対象額を合計してから消費税を計算します。10%の合計額に0.1を掛けた額と、8%の合計額に0.08を掛けた額をそれぞれ求め、区分ごとに1回だけ端数処理を行い、最後にそれらを合算します。全体をひとつの消費税額にまとめると適格請求書の要件を満たしません。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "単価は税抜と税込のどちらで入力すればよいですか？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "どちらでも構いませんが、どちらで記載しているかを請求書上で明確にする必要があります。本ツールは単価を税抜金額で入力し、税率区分ごとに合計した金額から消費税を計算して、1円未満を切り捨てる方式をとっています。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "明細ごとに端数処理すると何が問題ですか？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "明細行ごとに端数処理をすると、切り捨てや四捨五入で生じた差が積み重なり、税率区分ごとに合計した金額から計算した消費税額と一致しなくなることがあります。適格請求書では税率ごとに区分した合計額と消費税額の整合が求められるため、端数処理は区分ごとに1回にまとめるのが原則です。"
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body>
+
+<header class="site-header no-print">
+  <div class="wrap header-inner">
+    <a class="brand" href="https://www.reveriel.com/japan-invoice-pdf/" style="text-decoration:none;color:inherit;">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+        <rect width="32" height="32" rx="7" fill="currentColor"/>
+        <path d="M9 8h10l5 5v11a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2z" fill="#fff"/>
+        <path d="M19 8v5h5" fill="#c7d2fe"/>
+        <g stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+          <path d="M11 17h10M11 20h10M11 23h6"/>
+        </g>
+      </svg>
+      <div class="brand-text">
+        <strong>適格請求書 作成ツール</strong>
+        <span>書き方ガイド</span>
+      </div>
+    </a>
+    <div class="header-actions">
+      <a class="btn btn-primary" href="https://www.reveriel.com/japan-invoice-pdf/">今すぐ無料で作成する</a>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="guide-col">
+
+    <nav class="breadcrumb no-print" aria-label="パンくず">
+      <ol>
+        <li><a href="https://www.reveriel.com/japan-invoice-pdf/">適格請求書 作成ツール</a></li>
+        <li><a href="https://www.reveriel.com/japan-invoice-pdf/kakikata.html">書き方ガイド</a></li>
+        <li aria-current="page">端数処理・消費税の計算ルール</li>
+      </ol>
+    </nav>
+
+    <article class="guide">
+      <h1>適格請求書の端数処理・消費税の計算ルール</h1>
+      <p class="guide-meta">更新日：2026年10月12日</p>
+      <p class="guide-lead">
+        消費税額に1円未満の端数が出たとき、どこで・何回処理するかを間違えると、適格請求書の記載が取引先の帳簿と合わなくなります。この記事では、インボイス制度における<strong>「税率ごとに1回」</strong>という端数処理の原則、切り捨て・切り上げ・四捨五入の違い、10%と軽減税率8%が混在する場合の計算方法までを、計算例つきで解説します。
+      </p>
+
+      <div class="guide-cta-box">
+        <p><strong>税率区分ごとの消費税計算を自動で。</strong>10%と8%を自動で区分し、区分ごとに1回だけ端数処理して消費税額を計算します。ブラウザ内で適格請求書を作成し、PDF として保存できます。</p>
+        <a class="btn btn-primary" href="https://www.reveriel.com/japan-invoice-pdf/">今すぐ無料で作成する</a>
+      </div>
+
+      <h2>消費税額の端数処理は「税率ごとに1回」</h2>
+      <p>
+        適格請求書では、消費税額の1円未満の端数処理を<strong>税率ごとに1回だけ</strong>行います。10%の取引は10%分をまとめた合計額から消費税を計算して1回、8%（軽減税率）の取引は8%分をまとめた合計額から消費税を計算して1回、という数え方です。
+      </p>
+      <p>
+        明細行ごとに端数処理をしてしまうと、切り捨てや四捨五入で生じた差が積み重なり、税率区分ごとの合計額から計算した消費税額と一致しなくなることがあります。適格請求書では<strong>税率ごとに区分した合計額と消費税額の整合</strong>が求められるため、端数処理は区分ごとにまとめるのが原則です。
+      </p>
+      <div class="guide-note">
+        <strong>覚え方：</strong>「明細ごとに丸める」のではなく「税率区分ごとに、合計してから1回だけ丸める」。これが端数処理の基本ルールです。
+      </div>
+
+      <h2>端数処理の3つの方法（切り捨て・切り上げ・四捨五入）</h2>
+      <p>
+        端数処理の方法は、<strong>切り捨て・切り上げ・四捨五入のいずれでも構いません</strong>。法令上、特定の方法が義務づけられているわけではありません。ただし、一度選んだ方法は<strong>継続して適用する</strong>必要があります。取引ごとに方法が変わると、帳簿との整合が取れなくなるためです。
+      </p>
+      <table class="guide-table">
+        <thead>
+          <tr><th>方法</th><th>処理の内容</th><th>例（¥1,234.56の場合）</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>切り捨て</td><td>1円未満をそのまま落とす</td><td>¥1,234</td></tr>
+          <tr><td>切り上げ</td><td>1円未満があれば1円に繰り上げる</td><td>¥1,235</td></tr>
+          <tr><td>四捨五入</td><td>1円未満が0.5以上なら繰り上げる</td><td>¥1,235</td></tr>
+        </tbody>
+      </table>
+      <p>
+        実務では切り捨てが多く使われますが、取引先との取り決めや社内の経理ルールがある場合はそれに合わせてください。本ツールは税率区分ごとに合計した金額から消費税を計算し、<strong>1円未満を切り捨て</strong>る方式をとっています。
+      </p>
+
+      <h2>軽減税率8%と標準税率10%が混在する場合の計算</h2>
+      <p>
+        飲食料品の販売など軽減税率8%の対象と、一般的な10%の対象が同じ請求書に混在する場合は、<strong>税率ごとに取引を区分</strong>してから計算します。区分ごとに対象額を合計し、それぞれに税率を掛けて消費税を求め、区分ごとに1回ずつ端数処理を行ってから合算します。
+      </p>
+      <div class="guide-example">（計算例：税率ごとに1回だけ切り捨て）
+▼ 10%の区分
+　対象額（税抜）¥80,000 × 10% = ¥8,000.0 → 消費税額 ¥8,000
+▼ 8%（軽減税率）の区分
+　対象額（税抜）¥20,000 × 8% = ¥1,600.0 → 消費税額 ¥1,600
+▼ 合計
+　小計（税抜）¥100,000
+　消費税額合計 ¥9,600
+　請求金額 ¥109,600</div>
+      <p>
+        ここで大切なのは、<strong>¥100,000に対して10%や8%をまとめて掛けるのではない</strong>という点です。税率ごとの対象額が分かれているからこそ、区分ごとに消費税額を計算できます。全体をひとつの消費税額にまとめてしまうと、適格請求書の記載要件を満たしません。
+      </p>
+
+      <h3>端数が出る計算例で確かめる</h3>
+      <p>
+        端数が出るケースで、明細ごとに処理した場合と区分ごとに処理した場合の違いを見てみましょう。10%の対象が3行あり、それぞれの税抜金額に消費税を掛けると1円未満の端数が出るとします。
+      </p>
+      <div class="guide-example">（明細ごとに切り捨てた場合 → 合計と合わない例）
+　明細A ¥1,234 × 10% = ¥123.4 → ¥123
+　明細B ¥2,345 × 10% = ¥234.5 → ¥234
+　明細C ¥3,456 × 10% = ¥345.6 → ¥345
+　明細ごとの消費税合計 = ¥702
+　対象額合計 ¥7,035 × 10% = ¥703.5 → ¥703（区分ごとに1回）
+　→ 明細ごとに処理すると ¥702 と ¥703 でズレが生じる</div>
+      <p>
+        このように、明細ごとに丸めると1円単位の差が生まれます。<strong>税率区分ごとに対象額を合計してから1回だけ端数処理</strong>すれば、区分ごとの合計額と消費税額がきちんと対応します。
+      </p>
+
+      <h2>税抜・税込のどちらで計算するか</h2>
+      <p>
+        消費税の計算は、<strong>税抜金額</strong>を基準にする方法と、<strong>税込金額</strong>から逆算する方法のどちらでも構いません。大切なのは、請求書の上で「この金額は税抜か税込か」が分かるようにしておくことです。税抜と税込が混在していると、端数処理の結果が合わなくなる原因になります。
+      </p>
+      <p>
+        適格請求書では、税率ごとに区分した合計額と適用税率、そして税率ごとの消費税額を記載します。金額の基準をそろえたうえで、端数処理を税率区分ごとに1回にまとめる、という流れを守れば、記載要件を満たしやすくなります。記載事項の全体像は<a href="https://www.reveriel.com/japan-invoice-pdf/kakikata.html">適格請求書の書き方・記載要件ガイド</a>で確認できます。
+      </p>
+
+      <h2>よくあるつまずきとチェックポイント</h2>
+      <ul>
+        <li><strong>明細行ごとに端数処理している</strong> — 端数処理は税率区分ごとに1回です。</li>
+        <li><strong>10%と8%をまとめて1つの消費税額にしている</strong> — 税率ごとの区分記載が必要です。</li>
+        <li><strong>端数処理の方法が取引ごとに変わっている</strong> — 一度決めた方法を継続して適用します。</li>
+        <li><strong>税抜と税込が混在している</strong> — どちらで記載しているかを明確にします。</li>
+        <li><strong>軽減税率の品目に印を付けていない</strong> — 8%の品目には、その旨を示す記載が必要です。</li>
+      </ul>
+      <p>
+        こうした計算を手作業で行うと、区分の取り違えや二重の端数処理が起きやすくなります。<a href="https://www.reveriel.com/japan-invoice-pdf/">適格請求書 作成ツール</a>は、入力した明細を税率ごとに自動で区分し、区分ごとに1回だけ端数処理して消費税額を計算します。
+      </p>
+
+      <section class="guide-faq" aria-labelledby="faqTitle">
+        <h2 id="faqTitle">よくある質問</h2>
+        <dl>
+          <dt>消費税額の端数処理はいつ行えばよいですか？</dt>
+          <dd>適格請求書では、端数処理は税率ごとに1回だけ行います。10%の取引をまとめた合計額から消費税を計算して1回、8%の取引をまとめた合計額から消費税を計算して1回、という具合です。明細行ごとに端数処理をすると、区分ごとの合計と一致しなくなるため注意してください。</dd>
+
+          <dt>切り捨て・切り上げ・四捨五入のどれを使うべきですか？</dt>
+          <dd>法令上は切り捨て・切り上げ・四捨五入のいずれでも構いません。ただし、一度選んだ方法は継続して適用する必要があります。実務では切り捨てが多く使われますが、取引先との取り決めがある場合はそれに従ってください。</dd>
+
+          <dt>10%と8%が混在するとき、消費税はどう計算しますか？</dt>
+          <dd>税率ごとに取引を区分し、区分ごとに対象額を合計してから消費税を計算します。10%の合計額に0.1を掛けた額と、8%の合計額に0.08を掛けた額をそれぞれ求め、区分ごとに1回だけ端数処理を行い、最後にそれらを合算します。全体をひとつの消費税額にまとめると適格請求書の要件を満たしません。</dd>
+
+          <dt>単価は税抜と税込のどちらで入力すればよいですか？</dt>
+          <dd>どちらでも構いませんが、どちらで記載しているかを請求書上で明確にする必要があります。本ツールは単価を税抜金額で入力し、税率区分ごとに合計した金額から消費税を計算して、1円未満を切り捨てる方式をとっています。</dd>
+
+          <dt>明細ごとに端数処理すると何が問題ですか？</dt>
+          <dd>明細行ごとに端数処理をすると、切り捨てや四捨五入で生じた差が積み重なり、税率区分ごとに合計した金額から計算した消費税額と一致しなくなることがあります。適格請求書では税率ごとに区分した合計額と消費税額の整合が求められるため、端数処理は区分ごとに1回にまとめるのが原則です。</dd>
+        </dl>
+      </section>
+
+      <div class="guide-cta-foot">
+        <h2>端数処理まで自動の適格請求書を無料で作成する</h2>
+        <p>税率区分ごとに1回だけ端数処理して消費税額を計算。登録不要、すべてブラウザ内で完結し、PDF として保存・印刷できます。</p>
+        <a class="btn btn-primary" href="https://www.reveriel.com/japan-invoice-pdf/">今すぐ無料で作成する</a>
+      </div>
+    </article>
+
+    <section class="guide-related no-print" aria-labelledby="relTitle">
+      <h2 id="relTitle">あわせて読みたいガイド・ツール</h2>
+      <ul>
+        <li><a href="https://www.reveriel.com/japan-invoice-pdf/kakikata.html">適格請求書の書き方・記載要件ガイド<span class="rel-desc">6つの法定記載事項と税率区分の記載方法を解説</span></a></li>
+        <li><a href="https://www.reveriel.com/japan-invoice-pdf/toroku-bango.html">登録番号の確認方法・書き方ガイド<span class="rel-desc">T＋13桁の形式と公表サイト・e-Taxでの確認方法</span></a></li>
+        <li><a href="https://www.reveriel.com/mitsumori-pdf/">見積書 作成ツール<span class="rel-desc">インボイス制度に対応した見積書を無料で作成</span></a></li>
+        <li><a href="https://www.reveriel.com/nohinsho-pdf/">納品書 作成ツール<span class="rel-desc">納品の証憑づくりに。PDF 保存・印刷に対応</span></a></li>
+        <li><a href="https://www.reveriel.com/ryoshusho-pdf/">領収書 作成ツール<span class="rel-desc">インボイス対応の領収書をブラウザだけで作成</span></a></li>
+      </ul>
+    </section>
+
+    <section class="share-block no-print" id="shareBlock" aria-label="share">
+      <p class="share-block-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5.5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="18.5" r="2.6"/><path d="M8.3 10.8 15.7 6.7M8.3 13.2l7.4 4.1"/></svg>
+        このガイドをシェアする
+      </p>
+      <div class="share-row">
+        <a class="btn share-btn share-x" id="shareXLink" target="_blank" rel="noopener noreferrer"
+           href="https://twitter.com/intent/tweet?text=%E9%81%A9%E6%A0%BC%E8%AB%8B%E6%B1%82%E6%9B%B8%E3%81%AE%E7%AB%AF%E6%95%B0%E5%87%A6%E7%90%86%E3%83%BB%E6%B6%88%E8%B2%BB%E7%A8%8E%E3%81%AE%E8%A8%88%E7%AE%97%E3%83%AB%E3%83%BC%E3%83%AB&amp;url=https%3A%2F%2Fwww.reveriel.com%2Fjapan-invoice-pdf%2Fhasuu.html">
+          <svg class="share-logo" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.53 3h3.24l-7.08 8.09L22 21h-6.52l-5.11-6.68L4.53 21H1.29l7.57-8.66L1.6 3h6.69l4.62 6.1L17.53 3Zm-1.14 16.06h1.8L7.7 4.85H5.77l10.62 14.21Z"/></svg>
+          X で共有
+        </a>
+        <a class="btn share-btn share-line" id="shareLineLink" target="_blank" rel="noopener noreferrer"
+           href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fwww.reveriel.com%2Fjapan-invoice-pdf%2Fhasuu.html">
+          <svg class="share-logo" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3C6.9 3 2.8 6.4 2.8 10.6c0 3.77 3.35 6.93 7.88 7.53.31.07.73.2.83.47.1.24.06.62.03.87l-.13.83c-.04.24-.19.94.82.51 1.01-.42 5.44-3.2 7.42-5.48 1.37-1.47 2.13-2.96 2.13-4.73C21.78 6.4 17.1 3 12 3Z"/></svg>
+          LINE で共有
+        </a>
+        <button class="btn share-btn share-copy" id="shareCopyBtn" type="button" aria-label="リンクをコピー">
+          <svg class="share-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.2 13.7a3.6 3.6 0 0 0 5.1 0l2.9-2.9a3.6 3.6 0 0 0-5.1-5.1l-1.4 1.4"/><path d="M13.8 10.3a3.6 3.6 0 0 0-5.1 0l-2.9 2.9a3.6 3.6 0 0 0 5.1 5.1l1.4-1.4"/></svg>
+          <span id="shareCopyLabel">リンクをコピー</span>
+        </button>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="site-footer no-print">
+  <div class="wrap">
+    <p>適格請求書 作成ツール — ブラウザだけで動く無料のインボイス対応請求書ジェネレーター</p>
+    <p><a href="https://docs.google.com/forms/d/e/1FAIpQLSfHGUfgAlViT3TFiVtJi_EpJ4ioUpd9oGyaJ7rehEV-gBH_PA/viewform?usp=pp_url&amp;entry.1745177199=%E9%81%A9%E6%A0%BC%E8%AB%8B%E6%B1%82%E6%9B%B8PDF" target="_blank" rel="noopener">ご意見・フィードバック</a></p>
+    <p style="margin-top:8px;font-size:12.5px;opacity:.75;">関連ツール：<a href="https://www.reveriel.com/mitsumori-pdf/">見積書</a> ・ <a href="https://www.reveriel.com/ryoshusho-pdf/">領収書</a> ・ <a href="https://www.reveriel.com/nohinsho-pdf/">納品書</a> ・ <a href="https://www.reveriel.com/chumonsho-pdf/">注文書</a> ・ <a href="https://www.reveriel.com/hanko-generator/">判子・印鑑</a></p>
+    <p style="margin-top:8px;font-size:12.5px;opacity:.75;"><a href="https://www.reveriel.com/japan-invoice-pdf/kakikata.html">適格請求書の書き方ガイド</a> ・ <a href="https://www.reveriel.com/japan-invoice-pdf/privacy.html">プライバシーポリシー</a> ・ <a href="https://www.reveriel.com/japan-invoice-pdf/company.html">運営者情報</a></p>
+  </div>
+</footer>
+
+<script>
+/* このガイドのリンクをコピーする（要素が無いページでは何もしない） */
+(function () {
+  'use strict';
+  var btn = document.getElementById('shareCopyBtn');
+  if (!btn) return;
+  var label = document.getElementById('shareCopyLabel');
+  var pageUrl = 'https://www.reveriel.com/japan-invoice-pdf/hasuu.html';
+
+  function fallbackCopy(text) {
+    try {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.cssText = 'position:absolute;left:-9999px;top:0';
+      document.body.appendChild(ta);
+      ta.select();
+      var ok = document.execCommand('copy');
+      document.body.removeChild(ta);
+      return ok;
+    } catch (e) { return false; }
+  }
+
+  btn.addEventListener('click', function () {
+    var done = function (ok) {
+      if (!label) return;
+      var original = 'リンクをコピー';
+      label.textContent = ok ? 'コピーしました' : 'コピーできませんでした';
+      setTimeout(function () { label.textContent = original; }, 1800);
+    };
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(pageUrl).then(
+        function () { done(true); },
+        function () { done(fallbackCopy(pageUrl)); }
+      );
+    } else {
+      done(fallbackCopy(pageUrl));
+    }
+  });
+})();
+</script>
+
+<!-- フィードバックFAB（右下固定） -->
+<a href="https://docs.google.com/forms/d/e/1FAIpQLSfHGUfgAlViT3TFiVtJi_EpJ4ioUpd9oGyaJ7rehEV-gBH_PA/viewform?usp=pp_url&amp;entry.1745177199=%E9%81%A9%E6%A0%BC%E8%AB%8B%E6%B1%82%E6%9B%B8PDF" target="_blank" rel="noopener" class="feedback-fab" aria-label="ご意見・フィードバックを送る">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+  <span>ご意見・フィードバック</span>
+</a>
+</body>
+</html>
