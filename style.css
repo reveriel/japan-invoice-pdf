@@ -359,7 +359,7 @@ input[aria-invalid="true"]:focus { box-shadow: 0 0 0 3px var(--c-danger-soft); }
 
 /* ---------------- プレビュー ---------------- */
 
-.preview-pane { position: sticky; top: 88px; }
+.preview-pane { position: static; top: 88px; }
 
 @media (max-width: 980px) {
   .preview-pane { position: static; }
