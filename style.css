@@ -306,6 +306,82 @@ input[aria-invalid="true"]:focus { box-shadow: 0 0 0 3px var(--c-danger-soft); }
   line-height: 1.6;
 }
 
+/* ---------------- 書式（セグメント） ---------------- */
+
+.field .field-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--c-text-muted);
+  margin-bottom: 5px;
+}
+
+.seg {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 6px;
+}
+
+.field .seg-opt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 0;
+  padding: 8px 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--c-text-muted);
+  background: var(--c-surface-2);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-align: center;
+  user-select: none;
+  transition: background-color .15s, border-color .15s, color .15s;
+}
+
+.field .seg-opt:hover { border-color: var(--c-border-strong); color: var(--c-text); }
+
+.field .seg-opt:has(input:checked) {
+  color: var(--c-accent);
+  background: var(--c-accent-soft);
+  border-color: var(--c-accent);
+}
+
+.seg-opt input[type="radio"] {
+  -webkit-appearance: none;
+  appearance: none;
+  display: inline-grid;
+  place-content: center;
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  flex: none;
+  border: 1.5px solid var(--c-border-strong);
+  border-radius: 50%;
+  background: var(--c-surface);
+  cursor: pointer;
+}
+
+.seg-opt input[type="radio"]::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--c-accent);
+  transform: scale(0);
+  transition: transform .12s ease;
+}
+
+.seg-opt input[type="radio"]:checked { border-color: var(--c-accent); }
+.seg-opt input[type="radio"]:checked::before { transform: scale(1); }
+.seg-opt input[type="radio"]:focus-visible {
+  outline: 2px solid var(--c-focus);
+  outline-offset: 2px;
+}
+
 /* ---------------- 明細行 ---------------- */
 
 .rows-head,
@@ -396,8 +472,22 @@ input[aria-invalid="true"]:focus { box-shadow: 0 0 0 3px var(--c-danger-soft); }
   border-radius: 4px;
   box-shadow: var(--shadow-lg);
   font-size: 12.5px;
+  font-weight: 400;
   line-height: 1.65;
 }
+
+/* 書式: 字体（紙面ルートに class を付与。印刷時もそのまま継承される） */
+.paper.font-mincho {
+  font-family: "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", serif;
+}
+/* 既定の紙面（body の --font）と同じ Noto Sans JP を先頭に置き、
+   明朝を選ばない限り従来の見た目が変わらないようにする */
+.paper.font-gothic {
+  font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+}
+
+/* 書式: 太字（紙面全体の基準ウェイト。見出し等の個別指定はそのまま活かす） */
+.paper.weight-bold { font-weight: 700; }
 
 /* 書類タイトル */
 .doc-title {

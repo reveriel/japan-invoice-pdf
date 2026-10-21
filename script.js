@@ -40,12 +40,40 @@
     return '¥' + comma(n);
   }
 
-  // "2026-10-11" → "2026年10月11日"
+  // 元号の開始日（この日以降がその元号）
+  var WAREKI_ERAS = [
+    { name: '令和', y: 2019, m: 5,  d: 1  },
+    { name: '平成', y: 1989, m: 1,  d: 8  },
+    { name: '昭和', y: 1926, m: 12, d: 25 },
+    { name: '大正', y: 1912, m: 7,  d: 30 },
+    { name: '明治', y: 1868, m: 1,  d: 25 }
+  ];
+
+  // 西暦日付 → 和暦表記（元年は「1年」ではなく「元年」）
+  function toWareki(y, mo, d) {
+    for (var i = 0; i < WAREKI_ERAS.length; i++) {
+      var era = WAREKI_ERAS[i];
+      var started = y > era.y ||
+        (y === era.y && (mo > era.m || (mo === era.m && d >= era.d)));
+      if (started) {
+        var n = y - era.y + 1;
+        return era.name + (n === 1 ? '元年' : n + '年') + mo + '月' + d + '日';
+      }
+    }
+    return null; // 明治より前は西暦表記のまま
+  }
+
+  // "2026-10-11" → "2026年10月11日" / 和暦選択時 "令和8年10月11日"
   function formatDate(iso) {
     if (!iso) return '';
     var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
     if (!m) return iso;
-    return Number(m[1]) + '年' + Number(m[2]) + '月' + Number(m[3]) + '日';
+    var y = Number(m[1]), mo = Number(m[2]), d = Number(m[3]);
+    if (dateEraMode === 'wareki') {
+      var wareki = toWareki(y, mo, d);
+      if (wareki) return wareki;
+    }
+    return y + '年' + mo + '月' + d + '日';
   }
 
   // 数量は小数第2位まで、整数ならそのまま
@@ -68,6 +96,8 @@
      --------------------------------------------------------- */
 
   var TAX_RATES = { TEN: 10, EIGHT: 8 };
+
+  var dateEraMode = 'seireki'; // 'seireki' | 'wareki'
 
   var rowSeq = 0;
   var rows = []; // { id, name, qty, price, rate }
@@ -224,7 +254,37 @@
       .replace(/>/g, '&gt;');
   }
 
+  // 書式設定（字体・太字・日付表記）を紙面へ反映する
+  function applyFormat() {
+    var paper = $('paper');
+    if (!paper) return;
+
+    var fontEl = document.querySelector('input[name="docFont"]:checked');
+    var weightEl = document.querySelector('input[name="docWeight"]:checked');
+    var eraEl = document.querySelector('input[name="dateEra"]:checked');
+
+    var font = fontEl ? fontEl.value : 'gothic';
+    paper.classList.toggle('font-mincho', font === 'mincho');
+    paper.classList.toggle('font-gothic', font !== 'mincho');
+
+    var bold = weightEl ? weightEl.value === 'bold' : false;
+    paper.classList.toggle('weight-bold', bold);
+
+    dateEraMode = eraEl && eraEl.value === 'wareki' ? 'wareki' : 'seireki';
+  }
+
+  function applyFormatDefaults() {
+    var font = $('fmtFontGothic');
+    var weight = $('fmtWeightNormal');
+    var era = $('fmtEraSeireki');
+    if (font) font.checked = true;
+    if (weight) weight.checked = true;
+    if (era) era.checked = true;
+  }
+
   function renderPreview() {
+    applyFormat();
+
     var issuerNameEl = $('issuerName');
     var clientNameEl = $('clientName');
     var regEl = $('regNumber');
@@ -446,6 +506,7 @@
 
   function resetForm() {
     applyFieldDefaults();
+    applyFormatDefaults();
     renderAllRows();
     updateRegNumberState();
     renderPreview();

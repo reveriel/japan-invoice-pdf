@@ -162,6 +162,35 @@
         </div>
       </fieldset>
 
+      <fieldset class="card">
+        <legend>書式</legend>
+
+        <div class="field">
+          <span class="field-label" id="fmtFontLabel">字体</span>
+          <div class="seg" role="radiogroup" aria-labelledby="fmtFontLabel">
+            <label class="seg-opt"><input type="radio" name="docFont" id="fmtFontMincho" value="mincho"><span>明朝体</span></label>
+            <label class="seg-opt"><input type="radio" name="docFont" id="fmtFontGothic" value="gothic" checked><span>ゴシック体</span></label>
+          </div>
+        </div>
+
+        <div class="field">
+          <span class="field-label" id="fmtWeightLabel">太字</span>
+          <div class="seg" role="radiogroup" aria-labelledby="fmtWeightLabel">
+            <label class="seg-opt"><input type="radio" name="docWeight" id="fmtWeightNormal" value="normal" checked><span>通常</span></label>
+            <label class="seg-opt"><input type="radio" name="docWeight" id="fmtWeightBold" value="bold"><span>太字</span></label>
+          </div>
+        </div>
+
+        <div class="field">
+          <span class="field-label" id="fmtEraLabel">日付</span>
+          <div class="seg" role="radiogroup" aria-labelledby="fmtEraLabel">
+            <label class="seg-opt"><input type="radio" name="dateEra" id="fmtEraSeireki" value="seireki" checked><span>西暦</span></label>
+            <label class="seg-opt"><input type="radio" name="dateEra" id="fmtEraWareki" value="wareki"><span>和暦</span></label>
+          </div>
+          <p class="help">和暦を選ぶと「令和8年10月21日」のように表示されます。</p>
+        </div>
+      </fieldset>
+
       <p class="privacy-note">
         <svg viewBox="0 0 16 16" aria-hidden="true" class="ic"><path d="M8 1.5 3 3.5v4c0 3 2.1 5.6 5 6.5 2.9-.9 5-3.5 5-6.5v-4L8 1.5z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
         入力した内容はサーバーに送信されません。すべてお使いのブラウザ内だけで処理されます。
