@@ -435,10 +435,23 @@ input[aria-invalid="true"]:focus { box-shadow: 0 0 0 3px var(--c-danger-soft); }
 
 /* ---------------- プレビュー ---------------- */
 
-.preview-pane { position: static; top: 88px; }
+.preview-pane {
+  position: sticky;
+  top: 88px;
+  align-self: start;
+  max-height: calc(100vh - 104px);
+  overflow-y: auto;
+  padding: 2px 4px 16px;
+  scrollbar-gutter: stable;
+}
 
 @media (max-width: 980px) {
-  .preview-pane { position: static; }
+  .preview-pane {
+    position: static;
+    max-height: none;
+    overflow: visible;
+    padding: 0;
+  }
 }
 
 .preview-bar {
@@ -897,6 +910,7 @@ input[aria-invalid="true"]:focus { box-shadow: 0 0 0 3px var(--c-danger-soft); }
     gap: 0 !important;
     position: static !important;
     overflow: visible !important;
+    max-height: none !important;
     box-shadow: none !important;
     border: 0 !important;
     background: transparent !important;
