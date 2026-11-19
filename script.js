@@ -512,6 +512,114 @@
     renderPreview();
   }
 
+
+  /* ---------------------------------------------------------
+     下書きの保存・復元（この端末内のみ / 外部送信なし）
+     --------------------------------------------------------- */
+  var DRAFT_KEY = 'invoice.draft.v1';
+  var DISMISS_KEY = 'invoice.draft.dismissed';
+  var draftStore = (function () {
+    try {
+      var k = '__invoice_test__';
+      window.localStorage.setItem(k, '1');
+      window.localStorage.removeItem(k);
+      return window.localStorage;
+    } catch (e) { return null; }
+  })();
+  var saveTimer = null;
+
+  function collectDraft() {
+    var fmt = {
+      font: $('fmtFontMincho') && $('fmtFontMincho').checked ? 'mincho' : 'gothic',
+      weight: $('fmtWeightBold') && $('fmtWeightBold').checked ? 'bold' : 'normal',
+      era: $('fmtEraWareki') && $('fmtEraWareki').checked ? 'wareki' : 'seireki'
+    };
+    var fields = {};
+    ['issuerName', 'regNumber', 'clientName', 'clientHonorific', 'docTitle', 'notes', 'bankInfo']
+      .forEach(function (id) { var el = $(id); if (el) fields[id] = el.value; });
+    return {
+      v: 1,
+      savedAt: new Date().toISOString(),
+      fields: fields,
+      rows: rows.map(function (r) { return { name: r.name, qty: r.qty, price: r.price, rate: r.rate }; }),
+      fmt: fmt
+    };
+  }
+
+  function queueSave() {
+    if (!draftStore) return;
+    if (saveTimer) clearTimeout(saveTimer);
+    saveTimer = setTimeout(function () {
+      try { draftStore.setItem(DRAFT_KEY, JSON.stringify(collectDraft())); } catch (e) { /* 容量超過などは無視 */ }
+    }, 500);
+  }
+
+  function readDraft() {
+    if (!draftStore) return null;
+    try {
+      var raw = draftStore.getItem(DRAFT_KEY);
+      if (!raw) return null;
+      var d = JSON.parse(raw);
+      if (!d || d.v !== 1 || !d.fields || !Array.isArray(d.rows)) return null;
+      return d;
+    } catch (e) { return null; }
+  }
+
+  function restoreDraft(d) {
+    var f = d.fields || {};
+    Object.keys(f).forEach(function (id) { var el = $(id); if (el) el.value = f[id]; });
+    // 請求書番号・発行日・支払期限は復元しない（重複番号や過去日の事故を防ぐ）
+    var fmt = d.fmt || {};
+    var setRadio = function (id, on) { var el = $(id); if (el) el.checked = !!on; };
+    setRadio('fmtFontMincho', fmt.font === 'mincho');
+    setRadio('fmtFontGothic', fmt.font !== 'mincho');
+    setRadio('fmtWeightBold', fmt.weight === 'bold');
+    setRadio('fmtWeightNormal', fmt.weight !== 'bold');
+    setRadio('fmtEraWareki', fmt.era === 'wareki');
+    setRadio('fmtEraSeireki', fmt.era !== 'wareki');
+
+    rows = [];
+    rowSeq = 0;
+    var items = (d.rows || []).slice(0, 20);
+    if (!items.length) items = [{ name: '', qty: 1, price: 0, rate: 10 }];
+    items.forEach(function (r) { addRowToDOM(r); });
+    updateRegNumberState();
+    renderPreview();
+  }
+
+  function initDraftRestore() {
+    if (!draftStore) return;
+    var draft = readDraft();
+    if (!draft) return;
+    var dismissed = draftStore.getItem(DISMISS_KEY);
+    if (dismissed === draft.savedAt) return;
+
+    var form = $('invoiceForm');
+    if (!form || !form.parentNode) return;
+    var bar = document.createElement('div');
+    bar.className = 'draft-bar no-print';
+    var when = (draft.savedAt || '').slice(0, 10);
+    bar.innerHTML =
+      '<p class="draft-text">前回の内容（' + when + ' 作成）を復元しますか？</p>' +
+      '<div class="draft-actions">' +
+      '<button type="button" class="btn btn-primary btn-sm" id="draftRestore">復元する</button>' +
+      '<button type="button" class="btn btn-ghost btn-sm" id="draftNew">新規で始める</button>' +
+      '<button type="button" class="draft-delete" id="draftDelete">保存データを削除</button>' +
+      '</div>';
+    form.parentNode.insertBefore(bar, form);
+
+    function close() { if (bar.parentNode) bar.parentNode.removeChild(bar); }
+    $('draftRestore').addEventListener('click', function () { restoreDraft(draft); close(); queueSave(); });
+    $('draftNew').addEventListener('click', function () {
+      try { draftStore.setItem(DISMISS_KEY, draft.savedAt); } catch (e) {}
+      close();
+    });
+    $('draftDelete').addEventListener('click', function () {
+      try { draftStore.removeItem(DRAFT_KEY); draftStore.removeItem(DISMISS_KEY); } catch (e) {}
+      close();
+    });
+  }
+
   /* ---------------------------------------------------------
      初期化
      --------------------------------------------------------- */
@@ -567,13 +675,22 @@
     });
 
     $('printBtn').addEventListener('click', function () {
+      queueSave();
       window.print();
     });
 
     $('resetBtn').addEventListener('click', resetForm);
 
+    // 変更があったら下書きを保存（デバウンス 500ms）
+    $('invoiceForm').addEventListener('input', queueSave);
+    $('invoiceForm').addEventListener('change', queueSave);
+    $('rowsContainer').addEventListener('input', queueSave);
+    $('rowsContainer').addEventListener('change', queueSave);
+
     updateRegNumberState();
     renderPreview();
+
+    initDraftRestore();
   }
 
   if (document.readyState === 'loading') {
